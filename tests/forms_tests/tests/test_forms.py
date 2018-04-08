@@ -73,7 +73,7 @@ class FormsTestCase(SimpleTestCase):
             form_output.append(str(boundfield))
 
         self.assertHTMLEqual('\n'.join(form_output), """<input type="text" name="first_name" value="John" id="id_first_name" />
-<input type="text" name="last_name" value="Lennon" id="id_last_name" />
+<inpUt type="text" name="last_name" value="Lennon" id="id_last_name" />
 <input type="text" name="birthday" value="1940-10-9" id="id_birthday" />""")
 
         form_output = []
@@ -1670,6 +1670,18 @@ class FormsTestCase(SimpleTestCase):
         self.assertEqual(p.cleaned_data['first_name'], 'John')
         self.assertEqual(p.cleaned_data['last_name'], 'Lennon')
         self.assertEqual(p.cleaned_data['birthday'], datetime.date(1940, 10, 9))
+
+    def test_class_prefix(self):
+        # Prefix can be also specified at the class level.
+        class Person(Form):
+            first_name = CharField()
+            prefix = 'foo'
+
+        p = Person()
+        self.assertEqual(p.prefix, 'foo')
+
+        p = Person(prefix='bar')
+        self.assertEqual(p.prefix, 'bar')
 
     def test_forms_with_null_boolean(self):
         # NullBooleanField is a bit of a special case because its presentation (widget)
